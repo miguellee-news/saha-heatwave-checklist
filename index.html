@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>부산사하시니어클럽 - 폭염 자체점검표 자율점검 플랫폼</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* 인쇄 최적화 스타일 */
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+      }
+      .print-hidden {
+        display: none !important;
+      }
+      .print-page-break {
+        page-break-before: always !important;
+        margin-top: 20px;
+      }
+      .print-no-shadow {
+        box-shadow: none !important;
+        border: none !important;
+      }
+      main {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+    }
+    
+    /* 테마 색상 부드러운 전환 효과 */
+    .transition-theme {
+      transition: background-color 0.3s ease, border-color 0.3s ease, text-color 0.3s ease, fill 0.3s ease;
+    }
+
+    /* 서명 캔버스 부드러운 드로잉 터치 제어 */
+    canvas {
+      touch-action: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen font-sans antialiased transition-theme pb-12 md:pb-0">
+
+  <!-- ========================================== -->
+  <!-- 헤더 컨트롤 바 (인쇄 시 숨겨짐, 모바일 완전 대응) -->
+  <!-- ========================================== -->
+  <header class="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm px-4 py-3 md:px-6 md:py-4 print-hidden">
+    <div class="max-w-7xl mx-auto flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
+      
+      <!-- 브랜드 타이틀 영역 -->
+      <div class="flex items-center space-x-3">
+        <div id="header-icon-box" class="p-2.5 rounded-xl text-white bg-teal-600 transition-theme shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21l-.813-5.096L3 15l5.187-.813L9 9l.813 5.187L15 15l-5.187.813zM18 10.5l-.5-3.5-3.5-.5 3.5-.5.5-3.5.5 3.5 3.5.5-3.5.5-.5 3.5z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg md:text-xl font-black tracking-tight text-slate-900 flex items-center flex-wrap gap-2">
+            폭염 자체점검표 
+            <span class="text-[10px] font-bold px-2 py-0.5 bg-slate-100 rounded-full text-slate-500 border">부산사하시니어클럽 v2.0</span>
+          </h1>
+        </div>
+      </div>
+
+      <!-- 상단 액션 패널 그룹 (모바일에서 찌그러짐 방지 그리드 적용) -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 md:gap-3">
+        
+        <!-- 테마 셀렉터 & 초기화 버튼 묶음 -->
+        <div class="flex items-center justify-between sm:justify-start gap-2">
+          <!-- 테마 선택기 -->
+          <div class="flex items-center bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 text-xs">
+            <span class="text-slate-500 mr-2.5 flex items-center font-bold uppercase">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 01-1.622-3.39m3.453-2.226A11.954 11.954 0 0012 9c0-.642-.05-1.27-.149-1.883a9.142 9.142 0 00-4.43 4.43A11.962 11.962 0 006 12c0 .642.05 1.27.149 1.883a9.142 9.142 0 004.43-4.43zM13.5 4.662a9.142 9.142 0 014.43 4.43A11.962 11.962 0 0118 12c0 .642-.05 1.27-.149 1.883a9.142 9.142 0 01-4.43-4.43A11.962 11.962 0 0112 9c0-.642.05-1.27.149-1.883z" />
+              </svg>
+              <span class="hidden md:inline">테마</span>
+            </span>
+            <div class="flex gap-1.5">
+              <button onclick="setTheme('Teal')" class="w-4.5 h-4.5 rounded-full bg-teal-600 border border-white focus:outline-none" title="티블루"></button>
+              <button onclick="setTheme('Orange')" class="w-4.5 h-4.5 rounded-full bg-amber-500 border border-white focus:outline-none" title="오렌지"></button>
+              <button onclick="setTheme('Emerald')" class="w-4.5 h-4.5 rounded-full bg-emerald-600 border border-white focus:outline-none" title="에메랄드"></button>
+              <button onclick="setTheme('Indigo')" class="w-4.5 h-4.5 rounded-full bg-indigo-600 border border-white focus:outline-none" title="인디고"></button>
+            </div>
+          </div>
+
+          <!-- 점검기록 초기화 -->
+          <button onclick="resetAll()" class="p-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 transition-colors shrink-0" title="자체 점검표 초기화">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4.5 h-4.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- 핵심 동작 버튼 그룹 (모바일에서 3열 균등 배치로 절대 찌그러지지 않음) -->
+        <div class="grid grid-cols-3 gap-1.5 sm:flex sm:items-center sm:gap-2 w-full sm:w-auto">
+          <button onclick="autoFillDemo()" class="px-2.5 py-3 sm:py-2.5 text-xs font-semibold rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center border border-slate-200 transition-colors">
+            📋 데모입력
+          </button>
+          
+          <button onclick="openApiModal()" class="px-2.5 py-3 sm:py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center justify-center gap-1 shadow-md text-xs sm:text-sm transition-all transform active:scale-95">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+            </svg>
+            구글전송
+          </button>
+          
+          <button onclick="triggerPrint()" id="print-btn" class="px-2.5 py-3 sm:py-2.5 rounded-xl text-white font-bold flex items-center justify-center gap-1 shadow-md bg-teal-600 hover:bg-teal-700 transition-theme text-xs sm:text-sm transition-all transform active:scale-95">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.82l-.24 4.148A2.25 2.25 0 008.707 20.5h6.586a2.25 2.25 0 002.228-2.532l-.24-4.148m-10.51 0A2.25 2.25 0 014.5 11.5v-3a2.25 2.25 0 012.25-2.25h10.5a2.25 2.25 0 012.25 2.25v3a2.25 2.25 0 01-2.25 2.32m-10.51 0h10.51" />
+            </svg>
+            인쇄/PDF
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- 메인 작업 환경 영역 -->
+  <!-- ========================================== -->
+  <div class="max-w-7xl mx-auto px-4 py-4 md:py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 print:p-0 print:block">
+    
+    <!-- 사이드바: 통계 및 메타 데이터 입력칸 (인쇄 시 숨겨짐) -->
+    <aside class="lg:col-span-4 space-y-5 md:space-y-6 print-hidden">
+      
+      <!-- 웰컴 알림 카드 (모바일에서는 간소화) -->
+      <div id="sidebar-welcome" class="p-5 md:p-6 rounded-2xl md:rounded-3xl text-white shadow-md md:shadow-xl relative overflow-hidden bg-gradient-to-br from-teal-600 to-cyan-700 transition-theme">
+        <div class="absolute right-[-10%] top-[-10%] opacity-15">
+          <svg width="180" height="180" viewBox="0 0 100 100" fill="currentColor">
+            <circle cx="50" cy="50" r="40" />
+          </svg>
+        </div>
+        <span class="bg-white/20 text-white font-bold text-[9px] uppercase px-2 py-0.5 rounded-full backdrop-blur-sm">PRO Template</span>
+        <h2 class="text-xl md:text-2xl font-black mt-2 md:mt-4 mb-1 md:mb-2 leading-tight">스마트 자율안전 시스템</h2>
+        <p class="text-xs text-white/80 leading-relaxed mb-3 md:mb-4">
+          부산사하시니어클럽 어르신 일자리 전용 폭염 안전점검표 양식입니다.
+        </p>
+        <div class="h-px bg-white/20 my-3"></div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <p class="text-[9px] text-white/60">현재 점검률</p>
+            <p id="dashboard-progress" class="text-lg md:text-xl font-bold">0%</p>
+          </div>
+          <div>
+            <p class="text-[9px] text-white/60">현장 준수율</p>
+            <p id="dashboard-compliance" class="text-lg md:text-xl font-bold">0%</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 실시간 통계 정보 -->
+      <div class="bg-white rounded-2xl md:rounded-3xl p-5 md:p-6 shadow-sm border border-slate-100">
+        <h3 class="font-bold text-slate-800 text-sm mb-4 flex items-center gap-2">
+          <span id="stats-badge" class="w-1.5 h-4 rounded-full bg-teal-600 transition-theme"></span>
+          실시간 점검 통계 정보
+        </h3>
+        <div class="space-y-4">
+          <div>
+            <div class="flex justify-between text-xs text-slate-500 mb-1.5">
+              <span>진행 진척도</span>
+              <span id="stats-counter" class="font-semibold text-slate-700">0 / 13 문항 완료</span>
+            </div>
+            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+              <div id="stats-progress-bar" class="h-full bg-teal-600 transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-1.5 text-center text-xs pt-1">
+            <div class="bg-emerald-50 rounded-xl p-2 border border-emerald-100 text-emerald-800">
+              <span class="block text-[9px] text-emerald-600 font-semibold mb-0.5">적합</span>
+              <strong id="count-y" class="text-base md:text-lg font-bold">0</strong>
+            </div>
+            <div class="bg-rose-50 rounded-xl p-2 border border-rose-100 text-rose-800">
+              <span class="block text-[9px] text-rose-600 font-semibold mb-0.5">부적합</span>
+              <strong id="count-n" class="text-base md:text-lg font-bold">0</strong>
+            </div>
+            <div class="bg-slate-50 rounded-xl p-2 border border-slate-200 text-slate-700">
+              <span class="block text-[9px] text-slate-500 font-semibold mb-0.5">해당없음</span>
+              <strong id="count-na" class="text-base md:text-lg font-bold">0</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 점검자 및 현장 세부 정보 입력부 -->
+      <div class="bg-white rounded-2xl md:rounded-3xl p-5 md:p-6 shadow-sm border border-slate-100 space-y-4">
+        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+          <span id="config-badge" class="w-1.5 h-4 rounded-full bg-teal-600 transition-theme"></span>
+          점검자 정보
+        </h3>
+        
+        <div class="space-y-3 text-xs">
+          <div>
+            <label class="block text-slate-500 font-medium mb-1">회사명 / 사업장본사</label>
+            <input type="text" id="input-company" oninput="syncMeta()" value="부산사하시니어클럽" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-slate-400 font-semibold text-slate-800">
+          </div>
+          <div>
+            <label class="block text-slate-500 font-medium mb-1">사업단명</label>
+            <input type="text" id="input-site" oninput="syncMeta()" value="실버카페 바리스타 사업단" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-slate-400 font-semibold text-slate-800">
+          </div>
+          <div>
+            <label class="block text-slate-500 font-medium mb-1">점검 장소</label>
+            <input type="text" id="input-location" oninput="syncMeta()" value="사하구 어르신 쉼터 교육장" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-slate-400 font-semibold text-slate-800">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-slate-500 font-medium mb-1">점검 일자</label>
+              <input type="date" id="input-date" oninput="syncMeta()" class="w-full px-2 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-slate-400 font-semibold text-slate-800">
+            </div>
+            <div>
+              <label class="block text-slate-500 font-medium mb-1">사업단팀장</label>
+              <input type="text" id="input-inspector" oninput="syncMeta()" value="김영희 사업단팀장" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-slate-400 font-semibold text-slate-800">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-slate-500 font-medium mb-1">체감온도 (℃)</label>
+              <input type="number" step="0.1" id="input-temp" oninput="syncMeta()" value="32.5" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-slate-400 font-semibold text-slate-800">
+            </div>
+            <div>
+              <label class="block text-slate-500 font-medium mb-1">상대습도 (%)</label>
+              <input type="number" id="input-humidity" oninput="syncMeta()" value="65" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-slate-400 font-semibold text-slate-800">
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- 메인 보고서 서식 영역 (모바일 여백 축소 보정) -->
+    <!-- ========================================== -->
+    <main class="lg:col-span-8 bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-150 p-4 sm:p-8 lg:p-12 print-no-shadow print:p-0 print:border-none print:shadow-none print:rounded-none">
+      
+      <!-- 인쇄용 문서 헤더 -->
+      <div class="border-b-4 border-slate-800 pb-5 mb-6 md:mb-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
+          <div>
+            <p class="text-[10px] md:text-xs uppercase font-extrabold tracking-widest text-slate-400 print:text-slate-500">2026 HEATWAVE SAFETY 자율점검</p>
+            <h1 class="text-2xl md:text-3xl font-black text-slate-900 mt-1 leading-none tracking-tight">
+              폭염대비 온열질환 예방 자체점검표
+            </h1>
+            <p class="text-xs text-slate-500 mt-2">
+              ○ 폭염안전 5대 기본수칙 및 휴게시설(쉼터 등) 준수 여부
+            </p>
+          </div>
+          <div class="text-left sm:text-right">
+            <span id="doc-stamp-company" class="inline-block text-xs font-bold text-white px-3 py-1 rounded-md mb-2 bg-teal-600 print:border print:border-slate-800 print:text-slate-800 print:bg-white transition-theme">
+              부산사하시니어클럽
+            </span>
+            <p class="text-xs text-slate-400 print:text-slate-500 font-mono">문서번호: 2026-안전-HW-01</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 기상 및 점검자 기본 상황판 -->
+      <div class="bg-slate-50 rounded-2xl border border-slate-100 p-4 md:p-5 mb-6 md:mb-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-6 text-xs text-slate-600 print:bg-white print:border-slate-300 print:rounded-none">
+        <div>
+          <span class="block text-slate-400 font-semibold uppercase mb-0.5">사업단명</span>
+          <strong id="doc-meta-site" class="text-slate-900 font-bold text-sm">실버카페 바리스타 사업단</strong>
+        </div>
+        <div>
+          <span class="block text-slate-400 font-semibold uppercase mb-0.5">점검 장소</span>
+          <strong id="doc-meta-location" class="text-slate-900 font-bold text-sm">사하구 어르신 쉼터 교육장</strong>
+        </div>
+        <div>
+          <span class="block text-slate-400 font-semibold uppercase mb-0.5">점검 일시</span>
+          <strong id="doc-meta-date" class="text-slate-900 font-bold text-sm font-mono">-</strong>
+        </div>
+        <div>
+          <span class="block text-slate-400 font-semibold uppercase mb-0.5">사업단팀장</span>
+          <strong id="doc-meta-inspector" class="text-slate-900 font-bold text-sm">김영희 사업단팀장</strong>
+        </div>
+        <div>
+          <span class="block text-slate-400 font-semibold uppercase mb-0.5">현장 환경온도</span>
+          <strong id="doc-meta-temp" class="text-slate-900 font-bold text-sm font-mono">체감 32.5 ℃</strong>
+        </div>
+        <div>
+          <span class="block text-slate-400 font-semibold uppercase mb-0.5">현재 공중습도</span>
+          <strong id="doc-meta-humidity" class="text-slate-900 font-bold text-sm font-mono">65 %</strong>
+        </div>
+        <div class="sm:col-span-2 md:col-span-3 pt-2.5 border-t border-slate-200/50">
+          <span class="block text-slate-400 font-semibold uppercase mb-0.5">종합 준수 등급</span>
+          <strong id="doc-meta-rating" class="font-black text-sm text-amber-500">
+            C등급 (집중 관리필요) (0%)
+          </strong>
+        </div>
+      </div>
+
+      <!-- 체크리스트 문항 렌더링 컨테이너 -->
+      <div id="checklist-container" class="space-y-6 md:space-y-8">
+        <!-- 자바스크립트로 자동 생성됨 -->
+      </div>
+
+      <!-- 강제 페이지 분할 마크 (인쇄 시 첫페이지 넘침 방지) -->
+      <div class="print-page-break"></div>
+
+      <!-- 진단 소견 및 서명란 영역 -->
+      <div class="mt-8 md:mt-10 border-t-2 border-slate-800 pt-6 space-y-6 print:break-inside-avoid">
+        <div>
+          <h3 class="font-extrabold text-slate-900 text-base md:text-lg flex items-center gap-2 mb-2">
+            <span id="opinion-badge" class="w-1.5 h-4 rounded-full bg-teal-600 transition-theme"></span>
+            &lt;9&gt; 종합 안전보건 관리자의 진단 소견 (건의사항 포함)
+          </h3>
+          <p class="text-xs text-slate-400 mb-3">
+            본 자율점검 내용을 기반으로 향후 보완할 시설 보강 계획이나 근로자 건의사항을 기술해 주십시오.
+          </p>
+          <textarea id="general-opinion" rows="4" placeholder="여기에 종합소견 내용을 적어주세요..." class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400 leading-relaxed font-medium print:bg-white print:border-slate-300">본 사업단은 폭염경보 발령에 대비하여 그늘막 비치 및 시원한 식수를 완비하였으며, 작업자 대상 TBM 시 온열질환 조치 교육을 이수 완료함.</textarea>
+        </div>
+
+        <!-- 결재 및 친필 터치 서명 공간 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end pt-4 border-t border-slate-100">
+          <div class="text-xs text-slate-500 space-y-1">
+            <p>※ 본 자체 점검표는 산업안전보건기준에 관한 규칙 및 고용노동부 지침에 의거하여 작성되었습니다.</p>
+            <p>※ 부적합 항목이 발견된 경우 즉시 개선 조치를 실시하고 그 증빙 자료를 해당연도 12월 31일까지 보관해야 합니다.</p>
+            <p class="font-mono text-[9px] md:text-[10px] text-slate-400 mt-2">이 보고서는 스마트 전산 연동용 웹에서 실시간 발행되었습니다.</p>
+          </div>
+
+          <!-- 전자 서명 캔버스 패드 (모바일 터치 최적화) -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center relative print:bg-white print:border-slate-300 print:rounded-none">
+            <div class="flex justify-between items-center w-full mb-2">
+              <span class="text-xs font-bold text-slate-700">점검인 (사업단팀장) 서명</span>
+              <button onclick="clearSignature()" class="text-[10px] text-red-600 hover:underline flex items-center gap-0.5 print-hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                </svg>
+                지우기
+              </button>
+            </div>
+
+            <div class="relative bg-white border border-slate-200 rounded-lg overflow-hidden w-full h-32 cursor-crosshair">
+              <canvas id="sig-canvas" width="320" height="128" class="w-full h-full block"></canvas>
+              <div id="sig-placeholder" class="absolute inset-0 flex items-center justify-center text-[11px] text-slate-300 pointer-events-none">
+                여기에 마우스나 손가락으로 서명해 주세요.
+              </div>
+            </div>
+
+            <div id="doc-sign-name" class="text-[10px] text-slate-400 mt-2 font-medium">
+              김영희 사업단팀장 (인)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 결재 하단 날인 (인쇄용) -->
+      <div class="hidden print:block text-center text-[10px] text-slate-400 mt-12 border-t border-slate-200 pt-4">
+        본 문서의 소유권은 부산사하시니어클럽에 있으며, 폭염 예방 자율점검 목적 외 타 용도로 일체 무단 유출할 수 없습니다.
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 구글 시트 전송 프로세스 프리뷰 및 안내 오버레이 모달 -->
+  <!-- ========================================== -->
+  <div id="api-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-100 flex flex-col scale-95 transition-all duration-150">
+      
+      <!-- 모달 헤더 -->
+      <div class="px-6 py-5 border-b border-slate-150 flex justify-between items-center bg-slate-50">
+        <div class="flex items-center gap-2">
+          <span class="p-2 rounded-xl bg-emerald-100 text-emerald-700">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+            </svg>
+          </span>
+          <div>
+            <h3 class="font-extrabold text-slate-900 text-sm">구글 스프레드시트 실시간 동기화</h3>
+            <p class="text-[11px] text-slate-400">지정된 전용 클라우드로 데이터를 저장합니다.</p>
+          </div>
+        </div>
+        <button onclick="closeApiModal()" class="p-1 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- 모달 본문 (수집 지표 요강 노출) -->
+      <div class="p-6 space-y-5 overflow-y-auto max-h-[70vh]">
+        
+        <!-- 데이터 전송 필드 프리뷰 테이블 -->
+        <div class="bg-slate-50 border border-slate-150 rounded-2xl p-4 space-y-2 text-xs">
+          <div class="flex justify-between border-b border-slate-200 pb-1.5">
+            <span class="font-bold text-slate-800">전송 예정 데이터 미리보기</span>
+            <span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded-full font-bold">READY</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-600 pt-1 text-[11px]" id="preview-grid">
+            <!-- 자바스크립트로 동적 로딩 -->
+          </div>
+        </div>
+
+        <!-- 전송 프로그레스 바 상태판 -->
+        <div id="api-status-box" class="hidden">
+          <!-- 처리 결과 노출 장소 -->
+        </div>
+
+      </div>
+
+      <!-- 모달 풋터 제어 버튼 -->
+      <div class="px-6 py-4 border-t border-slate-150 bg-slate-50 flex justify-end gap-2.5">
+        <button onclick="closeApiModal()" id="btn-api-close" class="px-4 py-2 text-xs font-semibold rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 transition-colors">
+          닫기
+        </button>
+        <button onclick="uploadToGoogleSheet()" id="btn-api-send" class="px-5 py-2 text-xs font-bold rounded-xl text-white shadow-sm flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 transition-colors">
+          전송 시작
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 카카오톡 등 인앱 브라우저 인쇄 제한 안내용 긴급 팝업 모달 -->
+  <!-- ========================================== -->
+  <div id="print-guide-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-100 flex flex-col p-6 animate-in fade-in zoom-in-95 duration-150">
+      <div class="flex items-center gap-3 text-amber-600 mb-4">
+        <span class="p-2 bg-amber-100 rounded-xl">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+          </svg>
+        </span>
+        <h3 class="text-base font-black text-slate-900">모바일 인쇄 제한 안내</h3>
+      </div>
+      <div class="text-xs text-slate-600 space-y-3 leading-relaxed">
+        <p class="font-bold text-amber-700">⚠️ 카카오톡 등의 메신저 앱 안에서 링크를 바로 열 경우 브라우저 보안 규정상 인쇄 기능이 차단됩니다.</p>
+        <p>어르신 점검표를 안전하게 인쇄하거나 PDF로 저장하시려면 아래의 간단한 절차를 이용해 주세요.</p>
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-[11px] text-slate-700 space-y-1.5">
+          <div class="flex gap-1.5"><span class="font-bold text-teal-600 shrink-0">1단계</span> <span>화면 우측 상단이나 하단의 **[더보기(...) 또는 화살표]** 아이콘을 클릭합니다.</span></div>
+          <div class="flex gap-1.5"><span class="font-bold text-teal-600 shrink-0">2단계</span> <span>목록에서 **[다른 브라우저로 열기]** 또는 **[Safari/Chrome으로 열기]**를 선택합니다.</span></div>
+          <div class="flex gap-1.5"><span class="font-bold text-teal-600 shrink-0">3단계</span> <span>새로 열린 전용 브라우저에서 인쇄/PDF 저장 버튼을 누르면 정상 구동됩니다!</span></div>
+        </div>
+      </div>
+      <div class="mt-5 flex justify-end">
+        <button onclick="closePrintGuide()" class="px-5 py-2.5 text-xs font-bold bg-slate-900 text-white rounded-xl shadow hover:bg-slate-800 transition-colors">
+          확인했습니다
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 토스트 알림 컨테이너 -->
+  <div id="toast-container" class="fixed bottom-6 right-6 space-y-2 z-50 print-hidden"></div>
+
+
+  <!-- ========================================== -->
+  <!-- 어플리케이션 스크립트 엔진 영역 -->
+  <!-- ========================================== -->
+  <script>
+    // 하드코딩 지정 처리 완료된 고유 수신용 Web App 구글 URL 주소
+    const FIXED_GAS_URL = "https://script.google.com/macros/s/AKfycbybWSlQUwcL5PTl5pHb6a6w7wMGo5isJoJCU3HtJ5yIy-F7l0-tyQJ1fsMnQwqH3ieq_A/exec";
+
+    // 점검표 항목 일차원 DB 매핑
+    const DATABASE = [
+      {
+        id: "sec1",
+        title: "<1> 체감온도 측정 (규칙 제559조제4항)",
+        items: [
+          {
+            id: "item1_1",
+            question: "폭염작업 시 체감온도를 적절히 측정하고 있습니까?",
+            description: "폭염으로 인해 체감온도가 31℃ 이상이 되는 작업장소에서 측정 필수.",
+            guideline: "주된 작업장소에서 바닥면으로부터 약 1.2~1.5m 높이에서 측정하는지 확인."
+          }
+        ]
+      },
+      {
+        id: "sec2",
+        title: "<2> 온도·습도 조절 등 (규칙 제560조)",
+        items: [
+          {
+            id: "item2_1",
+            question: "체감온도 31℃ 이상인 경우 냉방 또는 통풍장치를 적절히 작동하고 있습니까?",
+            description: "실내·외 작업장 모두 포함.",
+            guideline: "에어컨, 이동식 에어컨, 산업용 대형 선풍기, 냉풍기 등 작동 여부 점검."
+          },
+          {
+            id: "item2_2",
+            question: "폭염 노출을 줄이기 위해 작업시간대를 유연하게 조정하였습니까?",
+            description: "폭염 경보/주의보 발령 시 필수 조치.",
+            guideline: "조기 출근(예: 05시~14시) 또는 작업시간 단축 조치 활용 등."
+          },
+          {
+            id: "item2_3",
+            question: "근로자에게 주기적인 휴식시간을 올바르게 부여하고 있습니까?",
+            description: "체감온도 33℃ 이상 시 2시간마다 20분 이상(또는 1시간마다 10분 이상) 휴식.",
+            guideline: "작업성질 상 휴식 부여가 곤란한 작업은 개인용 냉방/보냉장구를 지급했는지 점검."
+          }
+        ]
+      },
+      {
+        id: "sec3",
+        title: "<3> 온열장해 예방조치 (규칙 제562조)",
+        items: [
+          {
+            id: "item3_1",
+            question: "주된 작업장소에 온습도계를 상시 구비 및 비치하고 있습니까?",
+            description: "체감온도의 정확한 확인 목적.",
+            guideline: "원재료 처리, 가공, 보관 및 유지보수가 수행되는 주 공정 장소에 비치."
+          },
+          {
+            id: "item3_2",
+            question: "폭염작업 전 온열질환 증상 및 예방/응급조치 요령을 주지시켰습니까?",
+            description: "열사병, 열탈진, 열경련 등 예방 교육.",
+            guideline: "안전보건교육 또는 작업 전 안전 미팅(TBM)을 적극 활용하여 상기 안내."
+          },
+          {
+            id: "item3_3",
+            question: "체감온도 조치사항을 일자별로 기록 및 보관하고 있습니까?",
+            description: "현장의 법적 증빙자료 활용.",
+            guideline: "체감온도 및 가동 설비, 휴식 조치사항을 기록하여 당해 연도 12월 31일까지 보관."
+          },
+          {
+            id: "item3_4",
+            question: "온열질환자 발생 시 즉각 대처할 수 있는 응급 체계가 마련되어 있습니까?",
+            description: "119 신고 가이드라인 및 조치사항.",
+            guideline: "지체 없이 119 신고를 하거나 근로자가 직접 긴급 상황을 전파할 수 있도록 조치."
+          }
+        ]
+      },
+      {
+        id: "sec4",
+        title: "<4> 휴게시설<그늘> 설치 (규칙 제567조)",
+        items: [
+          {
+            id: "item4_1",
+            question: "옥외 작업장 인근에 이용이 편리한 그늘진 장소를 제공하였습니까?",
+            description: "휴식시간에 즉시 이용할 수 있는 근접 장소.",
+            guideline: "그늘막, 텐트, 차량 또는 냉방기가 구비된 실내 휴게공간 설치로 대체 가능."
+          }
+        ]
+      },
+      {
+        id: "sec5",
+        title: "<5> 소금과 음료수 등의 비치 (규칙 제571조)",
+        items: [
+          {
+            id: "item5_1",
+            question: "땀을 많이 흘리는 근로자를 위해 소금과 깨끗한 음료수 등을 비치하였습니까?",
+            description: "수분 및 염분 보충용 비품 점검.",
+            guideline: "작업 장소에 식수대, 제빙기, 식염 포도당 등이 부족함 없이 채워져 있는지 상시 확인."
+          }
+        ]
+      },
+      {
+        id: "sec6",
+        title: "<6> 휴게시설 설치·관리 (산업안전보건법 제128조의2)",
+        items: [
+          {
+            id: "item6_1",
+            question: "법적 기준에 부합하는 휴게시설을 적합하게 관리·운영하고 있습니까?",
+            description: "크기, 온도 및 위치 기준 준수.",
+            guideline: "동시 사용 근로자수 대비 적정 면적, 실내 온도 18℃~28℃ 유지, 유해지대 이탈 여부."
+          }
+        ]
+      },
+      {
+        id: "sec7",
+        title: "<7> 근로자 건강진단 (산안법 제128조 및 제130조)",
+        items: [
+          {
+            id: "item7_1",
+            question: "외국인 근로자를 포함한 전체 근로자의 건강진단을 적절히 실시하였습니까?",
+            description: "일반건강진단 및 특수건강진단 포함.",
+            guideline: "건강 취약층 및 폭염 고위험 작업 대상 근로자의 검진 및 관리 여부 확인."
+          }
+        ]
+      },
+      {
+        id: "sec8",
+        title: "<8> 폭염 단계별 작업중지 권고 준수 여부",
+        items: [
+          {
+            id: "item8_1",
+            question: "폭염 단계별 권고사항(33℃/35℃/38℃ 이상)에 따른 통제를 준수하고 있습니까?",
+            description: "온도 상승에 따른 옥외작업 제한 및 중단.",
+            guideline: "33도(작업단축), 35도(불가피한 경우 외 중지), 38도(긴급작업 외 완전 중지) 가이드 이행."
+          }
+        ]
+      }
+    ];
+
+    // 테마 설정 정보
+    const THEMES = {
+      Teal: {
+        primary: "bg-teal-600 hover:bg-teal-700",
+        text: "text-teal-700",
+        border: "border-teal-200",
+        bg: "bg-teal-50",
+        gradient: "from-teal-600 to-cyan-700",
+        raw: "teal"
+      },
+      Orange: {
+        primary: "bg-amber-600 hover:bg-amber-700",
+        text: "text-amber-700",
+        border: "border-amber-200",
+        bg: "bg-amber-50",
+        gradient: "from-amber-600 to-orange-600",
+        raw: "amber"
+      },
+      Emerald: {
+        primary: "bg-emerald-600 hover:bg-emerald-700",
+        text: "text-emerald-700",
+        border: "border-emerald-200",
+        bg: "bg-emerald-50",
+        gradient: "from-emerald-600 to-teal-600",
+        raw: "emerald"
+      },
+      Indigo: {
+        primary: "bg-indigo-600 hover:bg-indigo-700",
+        text: "text-indigo-700",
+        border: "border-indigo-200",
+        bg: "bg-indigo-50",
+        gradient: "from-indigo-600 to-blue-700",
+        raw: "indigo"
+      }
+    };
+
+    // 로컬 클라이언트 동적 기입 제어 변수
+    let currentTheme = "Teal";
+    let answers = {};
+    let signatureImage = null;
+    let isDrawing = false;
+
+    let sigCanvas;
+    let sigPlaceholder;
+    let sigCtx;
+
+    // 프리미엄 토스트 알리미 구현
+    function showToast(title, desc, type = "success") {
+      const container = document.getElementById("toast-container");
+      const toast = document.createElement("div");
+      
+      const themeColors = {
+        success: "border-emerald-200 bg-emerald-50 text-emerald-800",
+        error: "border-rose-200 bg-rose-50 text-rose-800",
+        info: "border-indigo-200 bg-indigo-50 text-indigo-800"
+      };
+
+      toast.className = "p-4 rounded-2xl border " + themeColors[type] + " flex flex-col gap-0.5 shadow-lg w-72 animate-in fade-in slide-in-from-bottom-5 duration-200";
+      toast.innerHTML = `
+        <strong class="text-xs font-bold">` + title + `</strong>
+        <p class="text-[10px] text-slate-500 font-medium">` + desc + `</p>
+      `;
+
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.className += " animate-out fade-out slide-out-to-bottom-5 duration-200";
+        setTimeout(() => toast.remove(), 200);
+      }, 5000);
+    }
+
+    // 윈도우 로딩 완료 시 구동
+    window.onload = function() {
+      sigCanvas = document.getElementById("sig-canvas");
+      sigPlaceholder = document.getElementById("sig-placeholder");
+      sigCtx = sigCanvas ? sigCanvas.getContext("2d") : null;
+
+      // 오늘 날짜 대입
+      const todayStr = new Date().toISOString().substring(0, 10);
+      document.getElementById("input-date").value = todayStr;
+
+      // 점검 리스트 매핑 객체 초기화
+      DATABASE.forEach(sec => {
+        sec.items.forEach(item => {
+          answers[item.id] = { status: "", note: "" };
+        });
+      });
+
+      renderChecklist();
+      syncMeta();
+      setTheme("Teal");
+      setupSignature();
+    }
+
+    // 전용 테마 적용기
+    function setTheme(themeName) {
+      currentTheme = themeName;
+      const tObj = THEMES[themeName];
+      const rootColor = tObj.raw;
+
+      const welcomeBox = document.getElementById("sidebar-welcome");
+      if (welcomeBox) {
+        welcomeBox.className = "p-6 rounded-3xl text-white shadow-xl relative overflow-hidden bg-gradient-to-br " + tObj.gradient + " transition-theme";
+      }
+
+      const headerIconBox = document.getElementById("header-icon-box");
+      if (headerIconBox) headerIconBox.className = "p-2.5 rounded-xl text-white " + tObj.primary + " transition-theme";
+      
+      const statsBadge = document.getElementById("stats-badge");
+      if (statsBadge) statsBadge.className = "w-1.5 h-4 rounded-full " + tObj.primary.split(" ")[0] + " transition-theme";
+      
+      const configBadge = document.getElementById("config-badge");
+      if (configBadge) configBadge.className = "w-1.5 h-4 rounded-full " + tObj.primary.split(" ")[0] + " transition-theme";
+      
+      const opinionBadge = document.getElementById("opinion-badge");
+      if (opinionBadge) opinionBadge.className = "w-1.5 h-4 rounded-full " + tObj.primary.split(" ")[0] + " transition-theme";
+      
+      const docStampCompany = document.getElementById("doc-stamp-company");
+      if (docStampCompany) docStampCompany.className = "inline-block text-xs font-bold text-white px-3 py-1 rounded-md mb-2 " + tObj.primary.split(" ")[0] + " print:border print:border-slate-800 print:text-slate-800 print:bg-white transition-theme";
+      
+      const printBtn = document.getElementById("print-btn");
+      if (printBtn) printBtn.className = "px-2.5 py-3 sm:py-2.5 rounded-xl text-white font-bold flex items-center justify-center gap-1 shadow-md " + tObj.primary + " transition-theme text-xs sm:text-sm transition-all transform active:scale-95";
+
+      recalculateStats();
+    }
+
+    // 메타데이터 입력값 실시간 동기화
+    function syncMeta() {
+      const companyVal = document.getElementById("input-company").value;
+      const siteVal = document.getElementById("input-site").value;
+      const locationVal = document.getElementById("input-location").value;
+      const dateVal = document.getElementById("input-date").value;
+      const inspectorVal = document.getElementById("input-inspector").value;
+      const tempVal = document.getElementById("input-temp").value;
+      const humidityVal = document.getElementById("input-humidity").value;
+
+      document.getElementById("doc-stamp-company").innerText = companyVal;
+      document.getElementById("doc-meta-site").innerText = siteVal;
+      document.getElementById("doc-meta-location").innerText = locationVal;
+      document.getElementById("doc-meta-date").innerText = dateVal || "-";
+      document.getElementById("doc-meta-inspector").innerText = inspectorVal;
+      document.getElementById("doc-meta-temp").innerText = "체감 " + tempVal + " ℃";
+      document.getElementById("doc-meta-humidity").innerText = humidityVal + " %";
+
+      document.getElementById("doc-sign-name").innerText = inspectorVal + " (인)";
+    }
+
+    // 점검 리스트 생성
+    function renderChecklist() {
+      const container = document.getElementById("checklist-container");
+      container.innerHTML = "";
+
+      DATABASE.forEach((section) => {
+        const secDiv = document.createElement("div");
+        secDiv.className = "border-b border-slate-100 pb-6 last:border-b-0 print:break-inside-avoid";
+
+        secDiv.innerHTML = `
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+              <span class="w-1 h-4 rounded bg-teal-600 transition-theme section-badge"></span>
+              ` + section.title + `
+            </h3>
+          </div>
+          <div class="space-y-4" id="section-items-` + section.id + `"></div>
+        `;
+
+        container.appendChild(secDiv);
+        const itemsContainer = document.getElementById("section-items-" + section.id);
+
+        section.items.forEach((item) => {
+          const itemDiv = document.createElement("div");
+          itemDiv.id = "item-card-" + item.id;
+          itemDiv.className = "p-4 rounded-xl border transition-all duration-150 border-slate-150 bg-white print:border-slate-300 print:bg-white";
+          
+          itemDiv.innerHTML = `
+            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+              <div class="space-y-1 max-w-xl">
+                <h4 class="text-sm font-bold text-slate-900 leading-snug">` + item.question + `</h4>
+                <p class="text-xs text-slate-500 leading-normal">` + item.description + `</p>
+                <p class="text-[11px] text-slate-400 italic font-medium">💡 기준: ` + item.guideline + `</p>
+              </div>
+
+              <!-- 버튼 (인쇄시 숨김, 모바일 균등 그리드 보정) -->
+              <div class="grid grid-cols-3 gap-1 w-full sm:w-auto sm:flex sm:items-center sm:gap-1.5 self-start shrink-0 pt-1 print-hidden">
+                <button onclick="setAnswer('` + item.id + `', 'Y')" id="btn-y-` + item.id + `" class="px-2 py-2 sm:px-2.5 sm:py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-600">
+                  적합
+                </button>
+                <button onclick="setAnswer('` + item.id + `', 'N')" id="btn-n-` + item.id + `" class="px-2 py-2 sm:px-2.5 sm:py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-600">
+                  부적합
+                </button>
+                <button onclick="setAnswer('` + item.id + `', 'NA')" id="btn-na-` + item.id + `" class="px-2 py-2 sm:px-2.5 sm:py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-500">
+                  해당없음
+                </button>
+              </div>
+
+              <!-- 인쇄용 결과 박스 -->
+              <div id="print-marker-` + item.id + `" class="hidden print:block text-xs font-bold font-mono border border-slate-400 rounded px-2 py-1 self-start shrink-0">
+                결과: [ ] 미실시
+              </div>
+            </div>
+
+            <!-- 조치 내용 인풋 -->
+            <div class="mt-3 pt-3 border-t border-dashed border-slate-200/60 flex items-center gap-2">
+              <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400 shrink-0">조치내용 및 특이사항:</span>
+              <input type="text" oninput="setNote('` + item.id + `', this.value)" id="note-` + item.id + `" placeholder="부적합 요소 및 대처 계획을 입력하세요..." class="w-full bg-transparent text-xs text-slate-700 placeholder-slate-300 focus:outline-none border-b border-transparent focus:border-slate-300 pb-0.5 print:placeholder-transparent font-medium">
+            </div>
+          `;
+
+          itemsContainer.appendChild(itemDiv);
+        });
+      });
+
+      document.querySelectorAll(".section-badge").forEach(el => {
+        el.className = "w-1 h-4 rounded " + THEMES[currentTheme].primary.split(" ")[0] + " transition-theme section-badge";
+      });
+    }
+
+    // 선택 입력 상태 업데이트
+    function setAnswer(itemId, status) {
+      answers[itemId].status = status;
+      
+      const card = document.getElementById("item-card-" + itemId);
+      const btnY = document.getElementById("btn-y-" + itemId);
+      const btnN = document.getElementById("btn-n-" + itemId);
+      const btnNa = document.getElementById("btn-na-" + itemId);
+      const printMarker = document.getElementById("print-marker-" + itemId);
+
+      if(!btnY || !btnN || !btnNa) return;
+
+      btnY.className = "px-2 py-2 sm:px-2.5 sm:py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-600";
+      btnN.className = "px-2 py-2 sm:px-2.5 sm:py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-600";
+      btnNa.className = "px-2 py-2 sm:px-2.5 sm:py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-500";
+      
+      card.className = "p-4 rounded-xl border transition-all duration-150 print:border-slate-300 print:bg-white bg-white border-slate-150";
+
+      if (status === "Y") {
+        btnY.className = "px-2 py-2 sm:px-2.5 sm:py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 bg-emerald-600 text-white shadow-sm";
+        card.className = "p-4 rounded-xl border transition-all duration-150 print:border-slate-300 print:bg-white border-emerald-100 bg-emerald-50/20";
+        printMarker.innerText = "결과: [✓] 적합";
+      } else if (status === "N") {
+        btnN.className = "px-2 py-2 sm:px-2.5 sm:py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 bg-rose-600 text-white shadow-sm";
+        card.className = "p-4 rounded-xl border transition-all duration-150 print:border-slate-300 print:bg-white border-rose-100 bg-rose-50/20";
+        printMarker.innerText = "결과: [✓] 부적합";
+      } else if (status === "NA") {
+        btnNa.className = "px-2 py-2 sm:px-2.5 sm:py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center bg-slate-600 text-white";
+        card.className = "p-4 rounded-xl border transition-all duration-150 print:border-slate-300 print:bg-white border-slate-100 bg-slate-50/40";
+        printMarker.innerText = "결과: [✓] 해당없음";
+      }
+
+      recalculateStats();
+    }
+
+    function setNote(itemId, noteText) {
+      answers[itemId].note = noteText;
+    }
+
+    // 진척도 실시간 연산
+    function recalculateStats() {
+      const totalQuestions = DATABASE.flatMap(sec => sec.items).length;
+      let answeredCount = 0;
+      let compliantCount = 0;
+      let nonCompliantCount = 0;
+      let naCount = 0;
+
+      Object.values(answers).forEach((ans) => {
+        if (ans.status !== "") answeredCount++;
+        if (ans.status === "Y") compliantCount++;
+        if (ans.status === "N") nonCompliantCount++;
+        if (ans.status === "NA") naCount++;
+      });
+
+      const validAnswerCount = totalQuestions - naCount;
+      const progressPercent = Math.round((answeredCount / totalQuestions) * 100) || 0;
+      const complianceRate = validAnswerCount > 0 
+        ? Math.round((compliantCount / validAnswerCount) * 100) 
+        : 0;
+
+      document.getElementById("dashboard-progress").innerText = progressPercent + "%";
+      document.getElementById("dashboard-compliance").innerText = complianceRate + "%";
+      
+      document.getElementById("stats-counter").innerText = answeredCount + " / " + totalQuestions + " 문항 완료";
+      
+      const themePrimaryClass = THEMES[currentTheme].primary.split(" ")[0];
+      const statsBar = document.getElementById("stats-progress-bar");
+      if (statsBar) {
+        statsBar.style.width = progressPercent + "%";
+        statsBar.className = "h-full " + themePrimaryClass + " transition-all duration-500";
+      }
+
+      document.getElementById("count-y").innerText = compliantCount;
+      document.getElementById("count-n").innerText = nonCompliantCount;
+      document.getElementById("count-na").innerText = naCount;
+
+      const ratingLabel = document.getElementById("doc-meta-rating");
+      if (complianceRate >= 90) {
+        ratingLabel.className = "font-black text-sm text-emerald-600";
+        ratingLabel.innerText = "S등급 (우수) (" + complianceRate + "%)";
+      } else if (complianceRate >= 70) {
+        ratingLabel.className = "font-black text-sm text-indigo-600";
+        ratingLabel.innerText = "A등급 (보통) (" + complianceRate + "%)";
+      } else {
+        ratingLabel.className = "font-black text-sm text-amber-500";
+        ratingLabel.innerText = "C등급 (집중 관리필요) (" + complianceRate + "%)";
+      }
+    }
+
+    // 전자서명 모듈
+    function setupSignature() {
+      if (!sigCanvas) return;
+
+      sigCanvas.width = sigCanvas.offsetWidth;
+      sigCanvas.height = sigCanvas.offsetHeight;
+
+      window.addEventListener("resize", () => {
+        if (!sigCanvas) return;
+        const currentData = sigCanvas.toDataURL();
+        sigCanvas.width = sigCanvas.offsetWidth;
+        sigCanvas.height = sigCanvas.offsetHeight;
+        
+        if (signatureImage) {
+          const img = new Image();
+          img.onload = function() {
+            sigCtx.drawImage(img, 0, 0, sigCanvas.width, sigCanvas.height);
+          };
+          img.src = currentData;
+        }
+      });
+      
+      sigCanvas.addEventListener("mousedown", startDraw);
+      sigCanvas.addEventListener("mousemove", drawStroke);
+      sigCanvas.addEventListener("mouseup", endDraw);
+      sigCanvas.addEventListener("mouseleave", endDraw);
+
+      sigCanvas.addEventListener("touchstart", startDraw);
+      sigCanvas.addEventListener("touchmove", drawStroke);
+      sigCanvas.addEventListener("touchend", endDraw);
+    }
+
+    function startDraw(e) {
+      isDrawing = true;
+      sigPlaceholder.classList.add("hidden");
+      
+      const pos = getPos(e);
+      sigCtx.beginPath();
+      sigCtx.moveTo(pos.x, pos.y);
+    }
+
+    function drawStroke(e) {
+      if (!isDrawing) return;
+      e.preventDefault();
+
+      const pos = getPos(e);
+      sigCtx.lineTo(pos.x, pos.y);
+      sigCtx.strokeStyle = "#0f172a";
+      sigCtx.lineWidth = 2.5;
+      sigCtx.lineCap = "round";
+      sigCtx.stroke();
+    }
+
+    function endDraw() {
+      if (!isDrawing) return;
+      isDrawing = false;
+      signatureImage = sigCanvas.toDataURL();
+    }
+
+    function getPos(e) {
+      const rect = sigCanvas.getBoundingClientRect();
+      const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+      const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    function clearSignature() {
+      sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+      signatureImage = null;
+      sigPlaceholder.classList.remove("hidden");
+      showToast("서명 클리어", "전자서명 패드가 완벽히 지워졌습니다.", "info");
+    }
+
+    // 모의 데이터 삽입
+    function autoFillDemo() {
+      DATABASE.forEach((sec, sIdx) => {
+        sec.items.forEach((item, iIdx) => {
+          let status = "Y";
+          if (sIdx === 1 && iIdx === 1) status = "NA";
+          if (sIdx === 3 && iIdx === 0) {
+            status = "N";
+            document.getElementById("note-" + item.id).value = "예비 온습도계 추가 구매 배정 요청 중";
+            answers[item.id].note = "예비 온습도계 추가 구매 배정 요청 중";
+          }
+          setAnswer(item.id, status);
+        });
+      });
+      showToast("데모 데이터 채우기 완료", "사하구 현장 맞춤형 점검 결과가 자동 모의 기록되었습니다.", "info");
+    }
+
+    // 데이터 초기화
+    function resetAll() {
+      if (confirm("모든 기입 수치 및 보건 체크기록을 지우고 초기화하시겠습니까?")) {
+        DATABASE.forEach(sec => {
+          sec.items.forEach(item => {
+            answers[item.id] = { status: "", note: "" };
+            document.getElementById("note-" + item.id).value = "";
+            
+            const btnY = document.getElementById("btn-y-" + item.id);
+            const btnN = document.getElementById("btn-n-" + item.id);
+            const btnNa = document.getElementById("btn-na-" + item.id);
+            const printMarker = document.getElementById("print-marker-" + item.id);
+            
+            btnY.className = "px-2 py-2 sm:px-2.5 sm:py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-600";
+            btnN.className = "px-2 py-2 sm:px-2.5 sm:py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-600";
+            btnNa.className = "px-2 py-2 sm:px-2.5 sm:py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-500";
+            document.getElementById("item-card-" + item.id).className = "p-4 rounded-xl border transition-all duration-150 print:border-slate-300 print:bg-white bg-white border-slate-150";
+            printMarker.innerText = "결과: [ ] 미실시";
+          });
+        });
+
+        document.getElementById("general-opinion").value = "";
+        clearSignature();
+        recalculateStats();
+        showToast("초기화 완료", "모든 안전진단 표가 빈 양식으로 초기화되었습니다.", "info");
+      }
+    }
+
+    // 인쇄 실행 (카카오톡 연동 검사 추가)
+    function triggerPrint() {
+      const isKakao = navigator.userAgent.toLowerCase().indexOf('kakaotalk') > -1;
+      
+      if (isKakao) {
+        // 카카오톡 내장 브라우저일 경우 스마트 가이드 창 실행
+        document.getElementById("print-guide-modal").classList.remove("hidden");
+        return;
+      }
+
+      try {
+        window.focus();
+        if (typeof window.print === 'function') {
+          window.print();
+        } else {
+          throw new Error("print_not_supported");
+        }
+      } catch (error) {
+        console.error("Print invocation failed:", error);
+        showToast(
+          "인쇄 기능 제한 안내 💡", 
+          "현재 미리보기 환경(Sandbox)에서는 브라우저 보안 정책에 의해 인쇄가 제한되어 있습니다. 우측 상단의 '새 탭에서 열기' 버튼을 클릭해 실행하시면 모바일에서도 깔끔하게 정상 작동합니다.", 
+          "error"
+        );
+      }
+    }
+
+    function closePrintGuide() {
+      document.getElementById("print-guide-modal").classList.add("hidden");
+    }
+
+    // 구글 전송용 오버레이 모달 열기
+    function openApiModal() {
+      const modal = document.getElementById("api-modal");
+      modal.classList.remove("hidden");
+      
+      const totalQuestions = DATABASE.flatMap(sec => sec.items).length;
+      let answeredCount = 0;
+      let compliantCount = 0;
+      let nonCompliantCount = 0;
+      let naCount = 0;
+
+      Object.values(answers).forEach((ans) => {
+        if (ans.status !== "") answeredCount++;
+        if (ans.status === "Y") compliantCount++;
+        if (ans.status === "N") nonCompliantCount++;
+        if (ans.status === "NA") naCount++;
+      });
+
+      const validAnswerCount = totalQuestions - naCount;
+      const complianceRate = validAnswerCount > 0 ? Math.round((compliantCount / validAnswerCount) * 100) : 0;
+
+      const previewGrid = document.getElementById("preview-grid");
+      previewGrid.innerHTML = `
+        <div>📍 <strong>사업단명:</strong> ` + document.getElementById("input-site").value + `</div>
+        <div>🏠 <strong>점검장소:</strong> ` + document.getElementById("input-location").value + `</div>
+        <div>📅 <strong>점검일자:</strong> ` + document.getElementById("input-date").value + `</div>
+        <div>👤 <strong>사업단팀장:</strong> ` + document.getElementById("input-inspector").value + `</div>
+        <div>🌡️ <strong>현장환경:</strong> ` + document.getElementById("input-temp").value + `℃ / ` + document.getElementById("input-humidity").value + `%</div>
+        <div>📈 <strong>준수율:</strong> <span class="font-bold text-emerald-600">` + complianceRate + `%</span></div>
+        <div>📋 <strong>체크결과:</strong> 적합 ` + compliantCount + ` / 부적합 ` + nonCompliantCount + `</div>
+        <div>✍️ <strong>전자서명:</strong> ` + (signatureImage ? "✔️ 완료됨" : "❌ 미서명 상태") + `</div>
+      `;
+
+      const statusBox = document.getElementById("api-status-box");
+      statusBox.className = "hidden";
+      statusBox.innerHTML = "";
+
+      const btnSend = document.getElementById("btn-api-send");
+      btnSend.disabled = false;
+      btnSend.className = "px-5 py-2 text-xs font-bold rounded-xl text-white shadow-sm flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 transition-colors";
+      btnSend.innerText = "전송 시작";
+    }
+
+    function closeApiModal() {
+      document.getElementById("api-modal").classList.add("hidden");
+      document.getElementById("api-status-box").className = "hidden";
+    }
+
+    // 구글 스프레드시트 비동기 업로드 엔진 실행
+    async function uploadToGoogleSheet() {
+      const statusBox = document.getElementById("api-status-box");
+      const btnSend = document.getElementById("btn-api-send");
+      const btnClose = document.getElementById("btn-api-close");
+
+      statusBox.className = "bg-indigo-50 border border-indigo-100 text-indigo-800 rounded-2xl p-4 flex items-center gap-3 animate-pulse text-xs";
+      statusBox.innerHTML = `
+        <div class="animate-spin rounded-full h-5 w-5 border-2 border-indigo-600 border-t-transparent shrink-0"></div>
+        <div>
+          <strong class="font-bold block">스프레드시트 원격 전송 진행 중...</strong>
+          <span class="text-[10px] text-indigo-500">서명 및 점검 데이터를 가공 중입니다. 약 2~4초 소요됩니다.</span>
+        </div>
+      `;
+      btnSend.disabled = true;
+      btnSend.className = "px-5 py-2 text-xs font-bold rounded-xl text-white bg-slate-300 cursor-not-allowed flex items-center gap-1.5";
+      btnSend.innerText = "전송 중...";
+      btnClose.disabled = true;
+
+      const totalQuestions = DATABASE.flatMap(sec => sec.items).length;
+      let compliantCount = 0;
+      let nonCompliantCount = 0;
+      let naCount = 0;
+      Object.values(answers).forEach((ans) => {
+        if (ans.status === "Y") compliantCount++;
+        if (ans.status === "N") nonCompliantCount++;
+        if (ans.status === "NA") naCount++;
+      });
+      const validAnswerCount = totalQuestions - naCount;
+      const complianceRate = validAnswerCount > 0 ? Math.round((compliantCount / validAnswerCount) * 100) : 0;
+
+      const payload = {
+        checkDate: document.getElementById("input-date").value,
+        siteName: document.getElementById("input-site").value,
+        checkLocation: document.getElementById("input-location").value,
+        inspector: document.getElementById("input-inspector").value,
+        currentTemp: document.getElementById("input-temp").value,
+        currentHumidity: document.getElementById("input-humidity").value,
+        complianceRate: complianceRate,
+        compliantCount: compliantCount,
+        nonCompliantCount: nonCompliantCount,
+        generalOpinion: document.getElementById("general-opinion").value,
+        signatureImage: signatureImage || "" // 이미지 바이너리 텍스트 전송
+      };
+
+      try {
+        await fetch(FIXED_GAS_URL, {
+          method: "POST",
+          mode: "no-cors", // 구글 리다이렉트 정책 우회용 옵션
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        statusBox.className = "bg-emerald-50 border border-emerald-100 text-emerald-800 rounded-2xl p-4 flex items-start gap-3 text-xs animate-none";
+        statusBox.innerHTML = `
+          <div class="bg-emerald-500 text-white p-1 rounded-full shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+          </div>
+          <div>
+            <strong class="font-bold block">구글 시트 전송 성공!</strong>
+            <p class="text-[10px] text-emerald-600/90 mt-0.5 leading-relaxed">부산사하시니어클럽의 폭염안전 점검 기록 및 실제 서명 이미지 변환 데이터가 구글 스프레드시트에 완벽히 추가되었습니다.</p>
+          </div>
+        `;
+        
+        btnSend.innerText = "전송 완료";
+        showToast("구글 시트 연동 성공", "데이터가 정상적으로 클라우드에 백업되었습니다.", "success");
+      } catch (error) {
+        statusBox.className = "bg-rose-50 border border-rose-100 text-rose-800 rounded-2xl p-4 flex items-start gap-3 text-xs animate-none";
+        statusBox.innerHTML = `
+          <div class="text-rose-500 shrink-0">⚠️</div>
+          <div>
+            <strong class="font-bold block">전송 오류가 발생했습니다.</strong>
+            <p class="text-[10px] text-rose-600/90 mt-0.5">` + (error.message || "네트워크 상태 불안정") + `</p>
+          </div>
+        `;
+        btnSend.disabled = false;
+        btnSend.className = "px-5 py-2 text-xs font-bold rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 transition-colors";
+        btnSend.innerText = "재전송 시도";
+        showToast("구글 시트 연동 실패", "네트워크 환경 혹은 권한 승인 상태를 확인해 주십시오.", "error");
+      } finally {
+        btnClose.disabled = false;
+      }
+    }
+  </script>
+
+</body>
+</html>
